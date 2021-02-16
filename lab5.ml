@@ -294,11 +294,44 @@ let validated_date ({year; month; day} as date) : date =
 (*......................................................................
 Exercise 9: Define a function `string_of_date` that returns a string
 representing its date argument. For example,
+
+    # string_of_date {year = 1706; month = 1; day = 17} ;;
+    - : string = "January 17, 1706"
 ......................................................................*)
 
+(* The trickiest part is converting the month number into a month name
+   string. One method is to index directly into a list of month names,
+   for example, the name for month 5 can be found at index 4 in this
+   0-indexed list:
+
+      # List.nth ["January"; "February"; "March"; "April"; 
+                  "May"; "June"; "July"; "August";
+                  "September"; "October"; "November"; "December"]
+                 4 ;;
+      - : string = "May"
+
+   We use this technique below. 
+
+   Putting the components together can make use of the string
+   concatenation operator `^`, leading to this implementation:
+
+      let string_of_date ({year; month; day} : date) : string =
+        let month_names = ["January"; "February"; "March"; "April"; 
+                           "May"; "June"; "July"; "August";
+                           "September"; "October"; "November"; "December"] in
+        (List.nth month_names (pred month))
+        ^ " "
+        ^ string_of_int day
+        ^ ", "
+        ^ string_of_int year ;;
+
+   Alternatively, functions in the formatted printing module `Printf`
+   are useful to know abou for this kind of thing: *)
+  
 let string_of_date ({year; month; day} : date) : string =
-  let month_names = ["January"; "February"; "March"; "April"; "May"; "June";
-                     "July"; "August"; "September"; "October"; "December"] in
+  let month_names = ["January"; "February"; "March"; "April"; 
+                     "May"; "June"; "July"; "August";
+                     "September"; "October"; "November"; "December"] in
   Printf.sprintf "%s %d, %d" (List.nth month_names (pred month)) day year ;;
      
 (*======================================================================
